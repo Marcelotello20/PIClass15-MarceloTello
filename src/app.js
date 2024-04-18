@@ -2,6 +2,7 @@ import express from 'express';
 import handlebars from 'express-handlebars';
 import productsRouter from'./routes/products.router.js';
 import cartsRouter from'./routes/carts.router.js';
+import chatRouter from './routes/chat.router.js';
 import viewsRouter from './routes/views.router.js';
 import __dirname from './utils/utils.js';
 
@@ -15,6 +16,12 @@ const app = express();
 //MongoDB connect
 const uri = "mongodb+srv://marcelotellocortez:wpmoneDQ4aKUwrPI@codercluster.ngzogsp.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=CoderCluster";
 mongoose.connect(uri);
+mongoose.connection.on('connected', () => {
+    console.log('Conectado a MongoDB');
+});
+mongoose.connection.on('error', (err) => {
+    console.error('Error de conexión a MongoDB:', err);
+});
 
 //Handlebars Config
 app.engine('handlebars', handlebars.engine());
@@ -31,6 +38,7 @@ app.use(express.static(__dirname+'/../public'))
 app.use('/',viewsRouter);
 app.use('/products', productsRouter);
 app.use('/carts', cartsRouter);
+app.use('/chat', chatRouter);
 
 const PORT = 8080;
 const httpServer = app.listen(PORT,() => { 

@@ -5,11 +5,11 @@ const messageCollection = "messages";
 const messageSchema = mongoose.Schema({
   user: {
     type:String,
-    require: true
+    required: true
   },
   message: {
     type:String,
-    require: true
+    required: true
   }
 });
 

@@ -48,7 +48,9 @@ router.get('/deleteproduct', async (req, res) => {
 });
 
 router.get('/chat', async (req,res) => {
-    res.render('chat', {});
+    res.render('chat', {
+        style: 'chat.css'
+    });
 })
 
 export default router;

@@ -25,8 +25,10 @@ router.get('/', async (req, res) => {
 
 // Endpoint con el productId para buscar uno especifico 
 router.get('/:id', async (req, res) => {
-    
-    const productId = +req.params.id;
+    //FS
+    // const productId = +req.params.id;
+    //DB
+    const productId = req.params.id;
 
     let product = await PM.getProductById(productId);
 
@@ -56,8 +58,11 @@ router.post('/', async (req, res) => {
 
 // Actualizar un producto por su id
 router.put('/:id', async (req, res) => {
+    //FS
+    // const productId = +req.params.id;
 
-    const productId = +req.params.id;
+    //DB
+    const productId = req.params.id;
 
     const update = req.body;
 
@@ -72,8 +77,10 @@ router.put('/:id', async (req, res) => {
 
 // Eliminar un producto por su id
 router.delete('/:id', async (req, res) => {
-
-    const productId = +req.params.id;
+    //FS
+    // const productId = +req.params.id;
+    //DB
+    const productId = req.params.id;
     
     try {
         await PM.deleteProduct(productId);
@@ -86,7 +93,11 @@ router.delete('/:id', async (req, res) => {
 
 // Endpoint para eliminar un producto por su id combinandolo con un form en HTML y en views.router( DELETE NO EXISTE EN HTML )
 router.post('/deleteproduct', async (req, res) => {
-    const productId = +req.body.productId;
+    //FS
+    // const productId = +req.body.productId;
+    
+    //DB
+    const productId = req.body.productId;
 
     try {
         await PM.deleteProduct(productId);

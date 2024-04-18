@@ -6,7 +6,7 @@ const productSchema = mongoose.Schema({
   
   title: {
     type:String,
-    require: true
+    required: true
   },
   code: { 
     type: String, 
@@ -14,28 +14,28 @@ const productSchema = mongoose.Schema({
   },
   description: {
     type:String,
-    require: true
+    required: true
   },
   category: {
     type:String,
-    require: true
+    required: true
   },
   price: {
     type:Number,
-    require: true
+    required: true
   },
   thumbnail: {
     type:Array,
-    require: false,
+    required: false,
     default: []
   },
   stock: {
     type:Number,
-    require: true
+    required: true
   },
   status: {
     type:Boolean,
-    require: false,
+    required: false,
     default:true
   }
 });

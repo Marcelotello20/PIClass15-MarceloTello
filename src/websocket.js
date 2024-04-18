@@ -12,6 +12,10 @@ const socketUpdatedProducts = async (socket) => {
     console.log("Productos Actualizados en tiempo real")
 }
 
+import MessageManager from "./dao/MessageManager.js";
+const MM = new MessageManager();
+
+
 export default (io) => {
 
     let messages = [];

@@ -23,24 +23,24 @@ class CartManagerDB {
                 console.error(`No se encontró el carrito con ID ${cartId}`);
                 return;
             }
-
+    
             const product = await PM.getProductById(productId);
             if (!product) {
                 console.error(`No se encontró el producto con ID ${productId}`);
                 return;
             }
-
+    
             // Verificar si el producto ya está en el carrito
             const productInCart = cart.products.find(item => item.product.equals(productId));
-
+    
             if (productInCart) {
                 productInCart.quantity += quantity;
             } else {
-                cart.products.push({ product: productId, quantity });
+                cart.products.push({ product: product._id, quantity });  // Aquí usamos el ObjectId del producto
             }
-
+    
             await cart.save();  // Guardar el carrito actualizado
-
+    
             console.log("Producto agregado al carrito");
         } catch (error) {
             console.error("Error al agregar el producto al carrito", error);
@@ -49,7 +49,7 @@ class CartManagerDB {
 
     async getCarts() {
         try {
-            return await cartModel.find().populate('products.product').lean(); // Populate para obtener detalles del producto
+            return await cartModel.find().lean(); 
         } catch (error) {
             console.error("Error al obtener el carrito:", error);
             return [];
@@ -73,7 +73,7 @@ class CartManagerDB {
 
     async deleteCart(cartId) {
         try {
-            
+
             const result = await cartModel.deleteOne({ _id: cartId });
             console.log("Carrito eliminado correctamente");
             if (result.deletedCount === 0) throw new Error(`El carrito ${cartId} no existe`);

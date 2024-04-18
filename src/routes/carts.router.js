@@ -18,9 +18,29 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.get("/:cid", async (req, res) => {
+router.get("/", async (req, res) => {
+    try {
+        const cart = await CM.getCarts();
 
-    const cartId = +req.params.cid;
+        if (!cart) {
+            console.error("No se pudo encontrar el carrito con ID:", cartId);
+            return res.status(404).json({
+                error: `No se encontró el carrito con ID ${cartId}`
+            });
+        }
+
+        return res.json(cart);
+    } catch (error) {
+        console.error("Error al obtener el carrito:", error);
+        return res.status(500).send("Error interno del servidor");
+    }
+});
+
+router.get("/:cid", async (req, res) => {
+    //FS
+    // const cartId = +req.params.cid;
+    //DB
+    const cartId = req.params.cid;
 
     try {
         const cart = await CM.getCartById(cartId);
@@ -40,8 +60,14 @@ router.get("/:cid", async (req, res) => {
 });
 
 router.post("/:cid/product/:pid", async (req, res) => {
-    const cartId = +req.params.cid;
-    const productId = +req.params.pid;
+    //FS
+    // const cartId = +req.params.cid;
+    // const productId = +req.params.pid;
+
+    //DB
+    const cartId = req.params.cid;
+    const productId = req.params.pid;
+
     const { quantity } = req.body;
 
     
