@@ -14,7 +14,7 @@ import mongoose from 'mongoose';
 const app = express();
 
 //MongoDB connect
-const uri = "mongodb+srv://marcelotellocortez:wpmoneDQ4aKUwrPI@codercluster.ngzogsp.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=CoderCluster";
+const uri = "mongodb+srv://marcelotellocortez:CONTRASEÑA@codercluster.ngzogsp.mongodb.net/ecommerce?retryWrites=true&w=majority&appName=CoderCluster";
 mongoose.connect(uri);
 mongoose.connection.on('connected', () => {
     console.log('Conectado a MongoDB');
