@@ -1,7 +1,8 @@
-import express from 'express';
+ import express from 'express';
 import __dirname from '../utils/utils.js';
 // import ProductManagerFS from '../dao/ProductManagerFS.js';
 import ProductManagerDB from '../dao/ProductManagerDB.js';
+import productModel from '../dao/models/productModel.js';
 
 const router = express.Router();
 const productsRouter = router;
@@ -9,40 +10,61 @@ const productsRouter = router;
 //const PM = new ProductManager(`${__dirname}/Productos.json`);
 const PM = new ProductManagerDB();
 
-// Endpoint para buscar los productos
 router.get('/', async (req, res) => {
+    let { page = 1, limit = 10, sort, query } = req.query;
 
-    const { limit } = req.query;
-
-    let products = await PM.getProducts();
-
-    if (limit) {
-        products = products.slice(0, limit);
+    if (sort) {
+        sort = JSON.parse(sort);
+    } else {
+        sort = { _id: 'asc' }; 
     }
 
-    res.send(products);
+    const options = {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        sort: sort,
+        lean: true 
+    };
+
+    const queryOptions = query ? { title: { $regex: query, $options: 'i' } } : {};
+
+    try {
+        const result = await productModel.paginate(queryOptions, options);
+
+        console.log("Productos obtenidos con éxito");
+        res.send(result); // Devuelve la respuesta paginada directamente
+    } catch (error) {
+        console.error("Error al obtener productos");
+        res.status(500).send('Error al obtener los productos', error);
+    }
 });
 
-// Endpoint con el productId para buscar uno especifico 
 router.get('/:id', async (req, res) => {
     //FS
     // const productId = +req.params.id;
     //DB
     const productId = req.params.id;
 
-    let product = await PM.getProductById(productId);
+    try{
+        let product = await PM.getProductById(productId);
 
-    if (!product) {
-        console.error("No se encontró el producto solicitado");
-        return res.status(404).json({
-            error: `No se encontró el producto con ID ${productId}`
-        });
+        if (!product) {
+            console.error("No se encontró el producto solicitado");
+            return res.status(404).json({
+                error: `No se encontró el producto con ID ${productId}`
+            });
+        }
+
+        res.json(product);
+
+    } catch (e) {
+        console.error("Error al obtener el producto por Id")
+        res.status(500).send(`Error al obtener el producto`,e)
     }
 
-    res.json(product);
+    
 });
 
-// Agregar un nuevo producto
 router.post('/', async (req, res) => {
 
     const product = req.body;
@@ -51,12 +73,11 @@ router.post('/', async (req, res) => {
         await PM.addProduct(product);
         res.status(201).send('Producto creado correctamente');
     } catch (error) {
-        console.error("Error al crear el producto:", error);
-        res.status(500).send('Error al crear el producto');
+        console.error("Error al crear el producto");
+        res.status(500).send('Error al crear el producto', error);
     }
 });
 
-// Actualizar un producto por su id
 router.put('/:id', async (req, res) => {
     //FS
     // const productId = +req.params.id;
@@ -70,12 +91,11 @@ router.put('/:id', async (req, res) => {
         await PM.updateProduct(productId, update);
         res.send('Producto actualizado correctamente');
     } catch (error) {
-        console.error("Error al actualizar el producto:", error);
-        res.status(500).send('Error al actualizar el producto');
+        console.error("Error al actualizar el producto");
+        res.status(500).send('Error al actualizar el producto', error);
     }
 });
 
-// Eliminar un producto por su id
 router.delete('/:id', async (req, res) => {
     //FS
     // const productId = +req.params.id;
@@ -86,8 +106,8 @@ router.delete('/:id', async (req, res) => {
         await PM.deleteProduct(productId);
         res.send('Producto eliminado correctamente');
     } catch (error) {
-        console.error("Error al eliminar el producto:", error);
-        res.status(500).send('Error al eliminar el producto');
+        console.error("Error al eliminar el producto:");
+        res.status(500).send('Error al eliminar el producto', error);
     }
 });
 
@@ -103,8 +123,8 @@ router.post('/deleteproduct', async (req, res) => {
         await PM.deleteProduct(productId);
         res.send('Producto eliminado correctamente');
     } catch (error) {
-        console.error("Error al eliminar el producto:", error);
-        res.status(500).send('Error al eliminar el producto');
+        console.error("Error al eliminar el producto:");
+        res.status(500).send('Error al eliminar el producto', error);
     }
 });
 
